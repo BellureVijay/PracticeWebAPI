@@ -1,0 +1,6 @@
+@PracticeProjectWebAPI_HostAddress = http://localhost:5148
+
+GET {{PracticeProjectWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
