@@ -20,7 +20,8 @@ namespace PracticeWebApi.Controllers
         [EnableRateLimiting("sliding")]
         public async Task<string> CallCatPicsAPI()
         {
-            _logger.LogInformation("call Cats Pic APi is called");
+            _logger.LogInformation("Correlation test log with ID {CorrelationId}",
+    HttpContext.Items["X-Correlation-ID"]);
             return await externalAPICall.GetCatPhotosAsync();
         }
     }
