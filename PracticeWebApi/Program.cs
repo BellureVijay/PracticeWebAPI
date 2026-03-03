@@ -4,6 +4,7 @@ using PracticeWebApi.Services.ServiceExtensions;
 using PracticeWebApi.Utilities;
 using Polly;
 using Polly.Extensions.Http;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,19 @@ builder.Services.AddHttpClient("ExternalApi", client =>
 .AddPolicyHandler(HttpPolicyExtensions
 .HandleTransientHttpError().CircuitBreakerAsync(3,TimeSpan.FromSeconds(30)));
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddSlidingWindowLimiter("sliding", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.SegmentsPerWindow = 6;
+
+       
+    });
+    options.RejectionStatusCode = 429;
+});
+
 builder.Services.AddHostedService<ApiPollingWorker>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<GlobaExceptionHandler2>();
@@ -34,11 +48,10 @@ app.MapGet("/job", () =>
 });
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseHttpsRedirection();
 
@@ -56,9 +69,12 @@ app.Use(async (context, next) =>
         context.Response.StatusCode = 500;
     }
 });
+app.UseRateLimiter();
 app.UseMiddleware<GlobalExceptionHandler>();
 
 app.UseMiddleware<GlobaExceptionHandler2>();
+
+app.UseMiddleware<CorrelationIdMiddlware>();
 
 
 app.MapControllers();

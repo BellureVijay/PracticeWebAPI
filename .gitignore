@@ -48,6 +48,7 @@ Migrations/*.Designer.cs
 
 ## Docker
 docker-compose.override.yml
+Dockerfile
 
 ## Temporary files
 *.tmp

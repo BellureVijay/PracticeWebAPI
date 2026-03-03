@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PracticeWebApi.Services.Interfaces;
 
 namespace PracticeWebApi.Controllers
@@ -9,13 +10,17 @@ namespace PracticeWebApi.Controllers
     public class ExternalAPIIController : ControllerBase
     {
         private readonly IExternalAPICall externalAPICall;
-        public ExternalAPIIController(IExternalAPICall aPICall)
+        private readonly ILogger<ExternalAPIIController> _logger;
+        public ExternalAPIIController(IExternalAPICall aPICall,ILogger<ExternalAPIIController> logger)
         {
             externalAPICall = aPICall;
+            _logger = logger;
         }
         [HttpGet("CatsPicture")]
+        [EnableRateLimiting("sliding")]
         public async Task<string> CallCatPicsAPI()
         {
+            _logger.LogInformation("call Cats Pic APi is called");
             return await externalAPICall.GetCatPhotosAsync();
         }
     }
