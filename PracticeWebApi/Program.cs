@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient("ExternalApi", client =>
 {
     client.BaseAddress = new Uri("https://api.open-meteo.com");
@@ -40,6 +41,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<GlobaExceptionHandler2>();
 builder.Services.AddScoped<IExternalAPICall, ExternalAPiCall>();
 builder.Services.AddScoped<IServiceInteraction, ServiceInteraction>();
+
 
 var app = builder.Build();
 app.MapGet("/job", () =>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PracticeProjectWebAPI.Controllers
@@ -19,6 +20,7 @@ namespace PracticeProjectWebAPI.Controllers
         }
 
         [HttpGet(Name = "GetEnviromentDetails")]
+        [Authorize]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
