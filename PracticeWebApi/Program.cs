@@ -5,6 +5,7 @@ using PracticeWebApi.Utilities;
 using Polly;
 using Polly.Extensions.Http;
 using Microsoft.AspNetCore.RateLimiting;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich
+    .FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+builder.Host.UseSerilog();
+
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient("ExternalApi", client =>
 {
@@ -54,7 +65,6 @@ app.MapGet("/job", () =>
     app.UseSwagger();
     app.UseSwaggerUI();
 
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -78,6 +88,7 @@ app.UseMiddleware<GlobaExceptionHandler2>();
 
 app.UseMiddleware<CorrelationIdMiddlware>();
 
+app.UseSerilogRequestLogging();
 
 app.MapControllers();
 

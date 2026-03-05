@@ -21,6 +21,7 @@ Thumbs.db
 
 ## Logs
 *.log
+Logs/
 
 ## ASP.NET Core
 appsettings.Development.json
@@ -68,3 +69,4 @@ _ReSharper*/
 
 ## Azure
 .azure/
+

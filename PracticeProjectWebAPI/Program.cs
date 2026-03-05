@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Experimental;
@@ -19,6 +20,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+builder.Services.AddScoped<IExternalApiClient, ExternalApiClient>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -40,6 +43,13 @@ builder.Services.AddAuthentication("Bearer")
     });
 builder.Services.AddAuthentication();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddHttpClient("DummyProductApi", client =>
+{
+    client.BaseAddress = new Uri("https://dummyjson.com/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -75,6 +85,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>("Database");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,6 +96,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
