@@ -2,7 +2,7 @@
 
 This is a backend practice project where I am implementing real-world concepts in ASP.NET Core instead of just building basic CRUD APIs.
 
-As of **03-03-2026**, the project includes the following:
+As of **05-03-2026**, the project includes the following:
 
 ## What I Have Implemented
 
@@ -14,18 +14,11 @@ As of **03-03-2026**, the project includes the following:
 * Service-to-service communication simulating microservice interaction
 * Retry and Circuit Breaker patterns for handling transient failures
 * Background service that calls an external API every 20 seconds
-
-## What This Project Focuses On
-
-This project is mainly focused on understanding:
-
-* Middleware pipeline behavior
-* Dependency Injection usage
-* Async and thread pool concepts
-* Resilience patterns
-* API scalability considerations
-* Background processing
-* Production-oriented API design
+* IMemoryCache
+* Authentication using Hashing Mechanism(Register,Login, ForgotPassword,ResetPassword)
+* Serilog Implementation
+* Common Method for External API calls using IHttpClientFactory
+* Pagination for External API
 
 ## Purpose
 
